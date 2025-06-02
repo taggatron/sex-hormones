@@ -363,6 +363,49 @@ footer {
   pointer-events: none;
 }
 
+.landing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2rem;
+  margin: 3rem auto 2rem auto;
+  max-width: 700px;
+}
+
+.landing-card {
+  background: #eef2ff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+  border: 2px solid #c7d2fe;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-card:hover {
+  background: #dbeafe;
+  box-shadow: 0 4px 24px #6366f155;
+  transform: translateY(-4px) scale(1.03);
+  border-color: #6366f1;
+}
+
+.landing-card h2 {
+  margin: 0 0 0.5rem 0;
+  color: #312e81;
+  font-size: 1.4rem;
+}
+
+.landing-card p {
+  color: #64748b;
+  font-size: 1.05rem;
+}
+
 @media (max-width: 700px) {
   .container {
     padding: 0.5rem;
@@ -424,5 +467,17 @@ footer {
 
   .kc-lines {
     display: none;
+  }
+
+  .landing-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0 1rem 0;
+  }
+
+  .landing-card {
+    min-height: 100px;
+    padding: 1.2rem 0.7rem;
   }
 }

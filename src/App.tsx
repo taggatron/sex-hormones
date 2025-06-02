@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import LandingPage from './LandingPage'
 
 // GCSE info for each gland
 const GLAND_INFO: Record<string, string> = {
@@ -306,6 +307,7 @@ function HormoneGraph() {
 }
 
 function App() {
+  const [view, setView] = useState<'landing' | 'hormones-glands' | 'hormone-match' | 'hormone-levels' | 'fertility-contraception'>('landing');
   const [selected, setSelected] = useState<string | null>(null)
   const [fshActive, setFshActive] = useState(false)
   const [lhActive, setLhActive] = useState(false)
@@ -377,20 +379,59 @@ function App() {
     }
   }
 
+  // Move main content to a new component for clarity
+  function HormonesAndGlands() {
+    return (
+      <>
+        <h1>Sex Hormones & Reproductive Glands</h1>
+        <div className="main-content">
+          <GlandDiagram onSelect={handleSelect} fshActive={fshActive} lhActive={lhActive} oestrogenActive={oestrogenActive} progesteroneActive={progesteroneActive} uterusThick={uterusThick} />
+          <Sidebar info={selected ? GLAND_INFO[selected] : null} fshGlow={fshGlow} lhGlow={lhGlow} oestrogenGlow={oestrogenGlow} progesteroneGlow={progesteroneGlow} />
+        </div>
+      </>
+    );
+  }
+
+  function HormoneMatch() {
+    return (
+      <>
+        <h1>Hormone Match</h1>
+        <KnowledgeCheck />
+      </>
+    );
+  }
+
+  function HormoneLevels() {
+    return (
+      <>
+        <h1>Hormone Levels</h1>
+        <HormoneGraph />
+      </>
+    );
+  }
+
+  function FertilityContraception() {
+    return (
+      <>
+        <h1>Fertility and Contraception</h1>
+        <div className="sidebar">
+          <b>Oral Contraception:</b> Contains oestrogen and progesterone to inhibit FSH production, preventing egg maturation and ovulation.<br /><br />
+          <b>Fertility Treatments:</b> Involve giving FSH and LH to stimulate egg release in women who have difficulty ovulating.
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="container">
-      <h1>Sex Hormones & Reproductive Glands</h1>
-      <div className="main-content">
-        <GlandDiagram onSelect={handleSelect} fshActive={fshActive} lhActive={lhActive} oestrogenActive={oestrogenActive} progesteroneActive={progesteroneActive} uterusThick={uterusThick} />
-        <Sidebar info={selected ? GLAND_INFO[selected] : null} fshGlow={fshGlow} lhGlow={lhGlow} oestrogenGlow={oestrogenGlow} progesteroneGlow={progesteroneGlow} />
-      </div>
-      <KnowledgeCheck />
-      <HormoneGraph />
-      <footer>
-        <small>GCSE Combined Science | Interactive Revision</small>
-      </footer>
+      {view === 'landing' && <LandingPage onSelect={setView} />}
+      {view === 'hormones-glands' && <><HormonesAndGlands /><button style={{marginTop:24}} onClick={()=>setView('landing')}>Back</button></>}
+      {view === 'hormone-match' && <><HormoneMatch /><button style={{marginTop:24}} onClick={()=>setView('landing')}>Back</button></>}
+      {view === 'hormone-levels' && <><HormoneLevels /><button style={{marginTop:24}} onClick={()=>setView('landing')}>Back</button></>}
+      {view === 'fertility-contraception' && <><FertilityContraception /><button style={{marginTop:24}} onClick={()=>setView('landing')}>Back</button></>}
+      {view === 'landing' && <footer><small>GCSE Combined Science | Interactive Revision</small></footer>}
     </div>
-  )
+  );
 }
 
 export default App
