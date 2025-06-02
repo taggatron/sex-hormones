@@ -1,0 +1,192 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+body {
+  background: #f3f4f6;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px #0001;
+}
+
+h1 {
+  text-align: center;
+  color: #312e81;
+  margin-bottom: 2rem;
+}
+
+.main-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.sidebar {
+  width: 300px;
+  min-height: 180px;
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: #312e81;
+  font-size: 1.1rem;
+  box-shadow: 0 1px 6px #0001;
+}
+
+footer {
+  margin-top: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.hormone {
+  filter: drop-shadow(0 0 8px #fbbf24cc);
+  animation: hormone-move 1.6s linear forwards;
+}
+
+.hormone-fsh {
+  filter: drop-shadow(0 0 10px #38bdf8cc);
+}
+
+.hormone-lh {
+  filter: drop-shadow(0 0 10px #f472b6cc);
+}
+
+.hormone-0 {
+  animation-delay: 0s;
+}
+
+.hormone-1 {
+  animation-delay: 0.3s;
+}
+
+.hormone-2 {
+  animation-delay: 0.6s;
+}
+
+.hormone-fsh-0 {
+  animation-delay: 0s;
+}
+
+.hormone-fsh-1 {
+  animation-delay: 0.2s;
+}
+
+.hormone-fsh-2 {
+  animation-delay: 0.4s;
+}
+
+.hormone-fsh-3 {
+  animation-delay: 0.6s;
+}
+
+.hormone-lh-0 {
+  animation-delay: 0s;
+}
+
+.hormone-lh-1 {
+  animation-delay: 0.2s;
+}
+
+.hormone-lh-2 {
+  animation-delay: 0.4s;
+}
+
+.hormone-lh-3 {
+  animation-delay: 0.6s;
+}
+
+@keyframes hormone-move {
+  0% {
+    opacity: 0.85;
+    transform: translate(0, 0) scale(1);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate(80px, 160px) scale(1.1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(80px, 160px) scale(0.7);
+  }
+}
+
+.glow-fsh {
+  color: #38bdf8;
+  text-shadow: 0 0 8px #38bdf8aa;
+  transition: text-shadow 0.2s, color 0.2s;
+}
+
+.glow-fsh.active {
+  color: #0ea5e9;
+  text-shadow: 0 0 18px #38bdf8, 0 0 32px #38bdf8;
+  font-weight: bold;
+}
+
+.glow-lh {
+  color: #f472b6;
+  text-shadow: 0 0 8px #f472b6aa;
+  transition: text-shadow 0.2s, color 0.2s;
+}
+
+.glow-lh.active {
+  color: #be185d;
+  text-shadow: 0 0 18px #f472b6, 0 0 32px #f472b6;
+  font-weight: bold;
+}
