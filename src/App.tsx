@@ -131,6 +131,111 @@ function Sidebar({ info, fshGlow, lhGlow, oestrogenGlow, progesteroneGlow }: { i
   )
 }
 
+// Knowledge Check Data and Component
+const HORMONES = [
+  { name: 'FSH', color: '#38bdf8' },
+  { name: 'LH', color: '#f472b6' },
+  { name: 'Oestrogen', color: '#a78bfa' },
+  { name: 'Progesterone', color: '#facc15' },
+];
+const DEFINITIONS = [
+  'Maintains uterus lining for pregnancy', // Progesterone
+  'Stimulates egg maturation and oestrogen production in ovaries', // FSH
+  'Thickens uterus lining and develops female secondary sexual characteristics', // Oestrogen
+  'Triggers ovulation and progesterone production in ovaries', // LH
+];
+const CORRECT_MATCHES = [1, 3, 2, 0];
+
+function KnowledgeCheck() {
+  const [selectedHormone, setSelectedHormone] = useState<number|null>(null);
+  const [selectedDef, setSelectedDef] = useState<number|null>(null);
+  const [matches, setMatches] = useState<(number|null)[]>([null, null, null, null]);
+  const [results, setResults] = useState<(boolean|null)[]>([null, null, null, null]);
+
+  function handleHormoneClick(idx: number) {
+    setSelectedHormone(idx);
+  }
+  function handleDefClick(idx: number) {
+    if (selectedHormone !== null && matches[selectedHormone] === null && !matches.includes(idx)) {
+      const newMatches = [...matches];
+      newMatches[selectedHormone] = idx;
+      setMatches(newMatches);
+      const newResults = [...results];
+      newResults[selectedHormone] = CORRECT_MATCHES[selectedHormone] === idx;
+      setResults(newResults);
+      setSelectedHormone(null);
+      setSelectedDef(null);
+    } else {
+      setSelectedDef(idx);
+    }
+  }
+  function getButtonStyle(idx: number, isHormone: boolean) {
+    const matchIdx = isHormone ? matches[idx] : matches.indexOf(idx);
+    const matched = matchIdx !== null && matchIdx !== -1;
+    const correct = isHormone ? results[idx] : results[matches.indexOf(idx)];
+    if (matched) {
+      return {
+        background: correct ? '#bbf7d0' : '#fecaca',
+        borderColor: correct ? '#22c55e' : '#ef4444',
+        color: '#222',
+        fontWeight: 600,
+      };
+    }
+    return {};
+  }
+  return (
+    <div className="knowledge-check-container">
+      <div className="kc-col kc-hormones">
+        {HORMONES.map((h, i) => (
+          <button
+            key={h.name}
+            className={`kc-btn${selectedHormone === i ? ' kc-selected' : ''}`}
+            style={{ borderLeft: `6px solid ${h.color}`, ...getButtonStyle(i, true) }}
+            disabled={matches[i] !== null}
+            onClick={() => handleHormoneClick(i)}
+          >
+            {h.name}
+          </button>
+        ))}
+      </div>
+      <svg className="kc-lines" width="60" height="220">
+        {matches.map((defIdx, hIdx) => (
+          defIdx !== null ? (
+            <line
+              key={hIdx}
+              x1={0}
+              y1={30 + hIdx * 50}
+              x2={60}
+              y2={30 + defIdx * 50}
+              stroke={results[hIdx] ? '#22c55e' : '#ef4444'}
+              strokeWidth={3}
+              markerEnd="url(#arrow)"
+            />
+          ) : null
+        ))}
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L8,4 L0,8" fill="#888" />
+          </marker>
+        </defs>
+      </svg>
+      <div className="kc-col kc-defs">
+        {DEFINITIONS.map((def, i) => (
+          <button
+            key={def}
+            className={`kc-btn${selectedDef === i ? ' kc-selected' : ''}`}
+            style={getButtonStyle(i, false)}
+            disabled={matches.includes(i)}
+            onClick={() => handleDefClick(i)}
+          >
+            {def}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [selected, setSelected] = useState<string | null>(null)
   const [fshActive, setFshActive] = useState(false)
@@ -210,6 +315,7 @@ function App() {
         <GlandDiagram onSelect={handleSelect} fshActive={fshActive} lhActive={lhActive} oestrogenActive={oestrogenActive} progesteroneActive={progesteroneActive} uterusThick={uterusThick} />
         <Sidebar info={selected ? GLAND_INFO[selected] : null} fshGlow={fshGlow} lhGlow={lhGlow} oestrogenGlow={oestrogenGlow} progesteroneGlow={progesteroneGlow} />
       </div>
+      <KnowledgeCheck />
       <footer>
         <small>GCSE Combined Science | Interactive Revision</small>
       </footer>
