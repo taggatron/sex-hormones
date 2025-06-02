@@ -8,8 +8,14 @@ const GLAND_INFO: Record<string, string> = {
   'ovaries': `The ovaries are the main female reproductive glands. They release eggs and produce the hormones oestrogen and progesterone, which control the menstrual cycle and the development of female secondary sexual characteristics.`
 }
 
-function GlandDiagram({ onSelect, fshActive, lhActive }: { onSelect: (gland: string) => void, fshActive: boolean, lhActive: boolean }) {
-  // Animate 4 FSH (blue) then 4 LH (pink) circles from pituitary to ovaries
+function GlandDiagram({ onSelect, fshActive, lhActive, oestrogenActive, uterusThick }: {
+  onSelect: (gland: string) => void,
+  fshActive: boolean,
+  lhActive: boolean,
+  oestrogenActive: boolean,
+  uterusThick: boolean
+}) {
+  // Animate 4 FSH (blue), 4 LH (pink), 4 Oestrogen (purple) circles
   const hormoneFSH = fshActive ? (
     <g>
       {[0, 1, 2, 3].map(i => (
@@ -40,6 +46,28 @@ function GlandDiagram({ onSelect, fshActive, lhActive }: { onSelect: (gland: str
       ))}
     </g>
   ) : null;
+  // Oestrogen: from ovary to uterus (new target)
+  // Calculate dx/dy for animation: ovary (280,250) to uterus center (200,150)
+  // dx = -80, dy = -100
+  const hormoneOestrogen = oestrogenActive ? (
+    <g>
+      {[0, 1, 2, 3].map(i => (
+        <circle
+          key={`oestrogen-${i}`}
+          className={`hormone hormone-oestrogen hormone-oestrogen-${i}`}
+          cx="280"
+          cy="250"
+          r="7"
+          fill="#a78bfa"
+          opacity="0.85"
+        />
+      ))}
+    </g>
+  ) : null;
+
+  // Uterus triangle points (raised by 50px)
+  const uterusOuter = "200,120 150,200 250,200";
+  const uterusInner = "200,130 160,195 240,195";
 
   return (
     <svg viewBox="0 0 400 300" width="400" height="300" style={{ background: '#f8f8ff', borderRadius: 12 }}>
@@ -48,6 +76,10 @@ function GlandDiagram({ onSelect, fshActive, lhActive }: { onSelect: (gland: str
       <circle cx="200" cy="90" r="12" fill="#a5b4fc" stroke="#333" strokeWidth="2" onClick={() => onSelect('pituitary')} style={{ cursor: 'pointer' }} />
       <text x="200" y="55" textAnchor="middle" fontSize="16" fill="#333">Brain</text>
       <text x="200" y="110" textAnchor="middle" fontSize="12" fill="#333">Pituitary</text>
+      {/* Uterus (hollow triangle) */}
+      <polygon points={uterusOuter} fill="none" stroke="#a3a3a3" strokeWidth="6" />
+      <polygon points={uterusInner} fill="none" stroke="#fbbf24" strokeWidth={uterusThick ? 10 : 4} />
+      <text x="200" y="165" textAnchor="middle" fontSize="15" fill="#111">Uterus</text>
       {/* Testes (male) */}
       <ellipse cx="120" cy="250" rx="18" ry="28" fill="#fcd34d" stroke="#b45309" strokeWidth="2" onClick={() => onSelect('testes')} style={{ cursor: 'pointer' }} />
       <text x="120" y="245" textAnchor="middle" fontSize="12" fill="#b45309">Testes</text>
@@ -56,18 +88,20 @@ function GlandDiagram({ onSelect, fshActive, lhActive }: { onSelect: (gland: str
       <text x="280" y="245" textAnchor="middle" fontSize="12" fill="#be185d">Ovaries</text>
       {hormoneFSH}
       {hormoneLH}
+      {hormoneOestrogen}
     </svg>
   )
 }
 
-function Sidebar({ info, fshGlow, lhGlow }: { info: string | null, fshGlow: boolean, lhGlow: boolean }) {
+function Sidebar({ info, fshGlow, lhGlow, oestrogenGlow }: { info: string | null, fshGlow: boolean, lhGlow: boolean, oestrogenGlow: boolean }) {
   if (!info) return <aside className="sidebar"><p>Click a gland to learn more.</p></aside>;
-  // Highlight FSH and LH in the info text
+  // Highlight FSH, LH and Oestrogen in the info text
   const highlighted = info.replace(
-    /FSH|LH/g,
+    /FSH|LH|Oestrogen/g,
     (match) => {
       if (match === 'FSH') return `<span class="glow-fsh${fshGlow ? ' active' : ''}">FSH</span>`;
       if (match === 'LH') return `<span class="glow-lh${lhGlow ? ' active' : ''}">LH</span>`;
+      if (match === 'Oestrogen') return `<span class="glow-oestrogen${oestrogenGlow ? ' active' : ''}">Oestrogen</span>`;
       return match;
     }
   );
@@ -84,6 +118,9 @@ function App() {
   const [lhActive, setLhActive] = useState(false)
   const [fshGlow, setFshGlow] = useState(false)
   const [lhGlow, setLhGlow] = useState(false)
+  const [oestrogenActive, setOestrogenActive] = useState(false)
+  const [oestrogenGlow, setOestrogenGlow] = useState(false)
+  const [uterusThick, setUterusThick] = useState(false)
 
   function handleSelect(gland: string) {
     setSelected(gland)
@@ -92,6 +129,9 @@ function App() {
       setLhActive(false)
       setFshGlow(false)
       setLhGlow(false)
+      setOestrogenActive(false)
+      setOestrogenGlow(false)
+      setUterusThick(false)
       setTimeout(() => {
         setFshActive(true)
         setFshGlow(true)
@@ -106,11 +146,27 @@ function App() {
         setLhActive(false)
         setLhGlow(false)
       }, 3600)
+    } else if (gland === 'ovaries') {
+      setOestrogenActive(false)
+      setOestrogenGlow(false)
+      setUterusThick(false)
+      setTimeout(() => {
+        setOestrogenActive(true)
+        setOestrogenGlow(true)
+      }, 10)
+      setTimeout(() => {
+        setOestrogenActive(false)
+        setOestrogenGlow(false)
+        setUterusThick(true)
+      }, 1800)
     } else {
       setFshActive(false)
       setLhActive(false)
       setFshGlow(false)
       setLhGlow(false)
+      setOestrogenActive(false)
+      setOestrogenGlow(false)
+      setUterusThick(false)
     }
   }
 
@@ -118,8 +174,8 @@ function App() {
     <div className="container">
       <h1>Sex Hormones & Reproductive Glands</h1>
       <div className="main-content">
-        <GlandDiagram onSelect={handleSelect} fshActive={fshActive} lhActive={lhActive} />
-        <Sidebar info={selected ? GLAND_INFO[selected] : null} fshGlow={fshGlow} lhGlow={lhGlow} />
+        <GlandDiagram onSelect={handleSelect} fshActive={fshActive} lhActive={lhActive} oestrogenActive={oestrogenActive} uterusThick={uterusThick} />
+        <Sidebar info={selected ? GLAND_INFO[selected] : null} fshGlow={fshGlow} lhGlow={lhGlow} oestrogenGlow={oestrogenGlow} />
       </div>
       <footer>
         <small>GCSE Combined Science | Interactive Revision</small>

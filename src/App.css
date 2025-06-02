@@ -101,6 +101,11 @@ footer {
   filter: drop-shadow(0 0 10px #f472b6cc);
 }
 
+.hormone-oestrogen {
+  filter: drop-shadow(0 0 10px #a78bfa);
+  animation: hormone-oestrogen-move 1.6s linear forwards;
+}
+
 .hormone-0 {
   animation-delay: 0s;
 }
@@ -145,6 +150,22 @@ footer {
   animation-delay: 0.6s;
 }
 
+.hormone-oestrogen-0 {
+  animation-delay: 0s;
+}
+
+.hormone-oestrogen-1 {
+  animation-delay: 0.2s;
+}
+
+.hormone-oestrogen-2 {
+  animation-delay: 0.4s;
+}
+
+.hormone-oestrogen-3 {
+  animation-delay: 0.6s;
+}
+
 @keyframes hormone-move {
   0% {
     opacity: 0.85;
@@ -164,6 +185,28 @@ footer {
   100% {
     opacity: 0;
     transform: translate(80px, 160px) scale(0.7);
+  }
+}
+
+@keyframes hormone-oestrogen-move {
+  0% {
+    opacity: 0.85;
+    transform: translate(0, 0) scale(1);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate(-80px, -100px) scale(1.1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-80px, -100px) scale(0.7);
   }
 }
 
@@ -189,4 +232,57 @@ footer {
   color: #be185d;
   text-shadow: 0 0 18px #f472b6, 0 0 32px #f472b6;
   font-weight: bold;
+}
+
+.glow-oestrogen {
+  color: #a78bfa;
+  text-shadow: 0 0 8px #a78bfa99;
+  transition: text-shadow 0.2s, color 0.2s;
+}
+
+.glow-oestrogen.active {
+  color: #7c3aed;
+  text-shadow: 0 0 18px #a78bfa, 0 0 32px #a78bfa;
+  font-weight: bold;
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 0.5rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .main-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100vw;
+    min-width: 0;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  footer {
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
 }
