@@ -236,6 +236,75 @@ function KnowledgeCheck() {
   );
 }
 
+function HormoneGraph() {
+  // Hormone colors
+  const colors = ['#38bdf8', '#f472b6', '#a78bfa', '#facc15'];
+  // More realistic hormone data (FSH, LH, Oestrogen, Progesterone)
+  // Each array is 28 days, values 0-1 (normalized for graph)
+  // Data based on typical menstrual cycle hormone profiles
+  const hormoneData: number[][] = [
+    // FSH: rises at start, small peak at ovulation, then falls
+    [0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1,0.7,0.5,0.45,0.4,0.38,0.36,0.35,0.36,0.38,0.4,0.45,0.5,0.55,0.6,0.65,0.7],
+    // LH: low, then sharp peak at ovulation (day 14), then low
+    [0.2,0.2,0.2,0.2,0.2,0.2,0.25,0.3,0.35,0.4,0.5,0.7,1,0.7,0.4,0.3,0.25,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2],
+    // Oestrogen: rises to peak before ovulation, dips, then smaller rise
+    [0.3,0.35,0.4,0.45,0.5,0.6,0.7,0.8,0.9,1,0.95,0.9,0.8,0.7,0.6,0.5,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.8,0.75,0.7],
+    // Progesterone: low until after ovulation, then rises and falls
+    [0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.2,0.3,0.5,0.7,0.85,1,0.95,0.9,0.85,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.15],
+  ];
+  const width = 420, height = 180, days = 28, pad = 32;
+  // Catmull-Rom to Bezier conversion for smooth, natural lines
+  function getCatmullRomPath(arr: number[]): string {
+    const points = arr.map((v: number, i: number) => [pad + (i * (width - pad * 2) / (days - 1)), height - pad - v * (height - pad * 2)]);
+    if (points.length < 2) return '';
+    let d = `M${points[0][0]},${points[0][1]}`;
+    for (let i = 0; i < points.length - 1; i++) {
+      const p0 = points[i - 1] || points[i];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const p3 = points[i + 2] || p2;
+      const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+      const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+      const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += ` C${c1x},${c1y} ${c2x},${c2y} ${p2[0]},${p2[1]}`;
+    }
+    return d;
+  }
+  return (
+    <div className="hormone-graph-container">
+      <svg width={width} height={height} className="hormone-graph">
+        {/* Axes */}
+        <line x1={pad} y1={height-pad} x2={width-pad} y2={height-pad} stroke="#888" strokeWidth={1.5} />
+        <line x1={pad} y1={pad} x2={pad} y2={height-pad} stroke="#888" strokeWidth={1.5} />
+        {/* Day ticks */}
+        {[0,7,14,21,28].map(d => (
+          <text key={d} x={pad + (d * (width-pad*2)/(days-1))} y={height-pad+18} fontSize={12} textAnchor="middle" fill="#333">{d}</text>
+        ))}
+        <text x={width/2} y={height-2} fontSize={13} fill="#333" textAnchor="middle">Day of cycle</text>
+        {/* Hormone labels */}
+        {['FSH','LH','Oestrogen','Progesterone'].map((h,i) => (
+          <text key={h} x={width-pad+8} y={pad+18+i*22} fontSize={13} fill={colors[i]}>{h}</text>
+        ))}
+        {/* Vertical dashed line for ovulation */}
+        <line x1={pad + (14 * (width-pad*2)/(days-1))} y1={pad-6} x2={pad + (14 * (width-pad*2)/(days-1))} y2={height-pad+6} stroke="#6366f1" strokeWidth={2} strokeDasharray="6 5" />
+        <text x={pad + (14 * (width-pad*2)/(days-1)) + 2} y={pad-12} fontSize={13} fill="#6366f1">Ovulation</text>
+        {/* Hormone smooth lines */}
+        {hormoneData.map((arr, i) => (
+          <path
+            key={i}
+            fill="none"
+            stroke={colors[i]}
+            strokeWidth={3}
+            d={getCatmullRomPath(arr)}
+            style={{ filter: `drop-shadow(0 0 4px ${colors[i]}55)` }}
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 function App() {
   const [selected, setSelected] = useState<string | null>(null)
   const [fshActive, setFshActive] = useState(false)
@@ -316,6 +385,7 @@ function App() {
         <Sidebar info={selected ? GLAND_INFO[selected] : null} fshGlow={fshGlow} lhGlow={lhGlow} oestrogenGlow={oestrogenGlow} progesteroneGlow={progesteroneGlow} />
       </div>
       <KnowledgeCheck />
+      <HormoneGraph />
       <footer>
         <small>GCSE Combined Science | Interactive Revision</small>
       </footer>
