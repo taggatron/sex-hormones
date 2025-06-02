@@ -253,10 +253,14 @@ function HormoneGraph() {
     // Progesterone: low until after ovulation, then rises and falls
     [0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.15,0.2,0.3,0.5,0.7,0.85,1,0.95,0.9,0.85,0.8,0.7,0.6,0.5,0.4,0.3,0.2,0.15],
   ];
-  const width = 420, height = 180, days = 28, pad = 32;
+  const width = 420, height = 180, days = 28;
+  const padLeft = 8; // was 32
+  const padRight = 32;
+  const padTop = 32;
+  const padBottom = 32;
   // Catmull-Rom to Bezier conversion for smooth, natural lines
   function getCatmullRomPath(arr: number[]): string {
-    const points = arr.map((v: number, i: number) => [pad + (i * (width - pad * 2) / (days - 1)), height - pad - v * (height - pad * 2)]);
+    const points = arr.map((v: number, i: number) => [padLeft + (i * (width - padLeft - padRight) / (days - 1)), height - padBottom - v * (height - padTop - padBottom)]);
     if (points.length < 2) return '';
     let d = `M${points[0][0]},${points[0][1]}`;
     for (let i = 0; i < points.length - 1; i++) {
@@ -274,22 +278,28 @@ function HormoneGraph() {
   }
   return (
     <div className="hormone-graph-container">
-      <svg width={width} height={height} className="hormone-graph">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        width="100%"
+        height="100%"
+        className="hormone-graph"
+        preserveAspectRatio="xMidYMid meet"
+      >
         {/* Axes */}
-        <line x1={pad} y1={height-pad} x2={width-pad} y2={height-pad} stroke="#888" strokeWidth={1.5} />
-        <line x1={pad} y1={pad} x2={pad} y2={height-pad} stroke="#888" strokeWidth={1.5} />
+        <line x1={padLeft} y1={height-padBottom} x2={width-padRight} y2={height-padBottom} stroke="#888" strokeWidth={1.5} />
+        <line x1={padLeft} y1={padTop} x2={padLeft} y2={height-padBottom} stroke="#888" strokeWidth={1.5} />
         {/* Day ticks */}
         {[0,7,14,21,28].map(d => (
-          <text key={d} x={pad + (d * (width-pad*2)/(days-1))} y={height-pad+18} fontSize={12} textAnchor="middle" fill="#333">{d}</text>
+          <text key={d} x={padLeft + (d * (width-padLeft-padRight)/(days-1))} y={height-padBottom+18} fontSize={12} textAnchor="middle" fill="#333">{d}</text>
         ))}
         <text x={width/2} y={height-2} fontSize={13} fill="#333" textAnchor="middle">Day of cycle</text>
         {/* Hormone labels */}
         {['FSH','LH','Oestrogen','Progesterone'].map((h,i) => (
-          <text key={h} x={width-pad+8} y={pad+18+i*22} fontSize={13} fill={colors[i]}>{h}</text>
+          <text key={h} x={width-padRight+8} y={padTop+18+i*22} fontSize={13} fill={colors[i]}>{h}</text>
         ))}
         {/* Vertical dashed line for ovulation */}
-        <line x1={pad + (14 * (width-pad*2)/(days-1))} y1={pad-6} x2={pad + (14 * (width-pad*2)/(days-1))} y2={height-pad+6} stroke="#6366f1" strokeWidth={2} strokeDasharray="6 5" />
-        <text x={pad + (14 * (width-pad*2)/(days-1)) + 2} y={pad-12} fontSize={13} fill="#6366f1">Ovulation</text>
+        <line x1={padLeft + (14 * (width-padLeft-padRight)/(days-1))} y1={padTop-6} x2={padLeft + (14 * (width-padLeft-padRight)/(days-1))} y2={height-padBottom+6} stroke="#6366f1" strokeWidth={2} strokeDasharray="6 5" />
+        <text x={padLeft + (14 * (width-padLeft-padRight)/(days-1)) + 2} y={padTop-12} fontSize={13} fill="#6366f1">Ovulation</text>
         {/* Hormone smooth lines */}
         {hormoneData.map((arr, i) => (
           <path
