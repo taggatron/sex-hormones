@@ -106,6 +106,11 @@ footer {
   animation: hormone-oestrogen-move 1.6s linear forwards;
 }
 
+.hormone-progesterone {
+  filter: drop-shadow(0 0 10px #facc15);
+  animation: hormone-progesterone-move 1.6s linear forwards;
+}
+
 .hormone-0 {
   animation-delay: 0s;
 }
@@ -166,6 +171,22 @@ footer {
   animation-delay: 0.6s;
 }
 
+.hormone-progesterone-0 {
+  animation-delay: 0s;
+}
+
+.hormone-progesterone-1 {
+  animation-delay: 0.2s;
+}
+
+.hormone-progesterone-2 {
+  animation-delay: 0.4s;
+}
+
+.hormone-progesterone-3 {
+  animation-delay: 0.6s;
+}
+
 @keyframes hormone-move {
   0% {
     opacity: 0.85;
@@ -189,6 +210,28 @@ footer {
 }
 
 @keyframes hormone-oestrogen-move {
+  0% {
+    opacity: 0.85;
+    transform: translate(0, 0) scale(1);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate(-80px, -100px) scale(1.1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-80px, -100px) scale(0.7);
+  }
+}
+
+@keyframes hormone-progesterone-move {
   0% {
     opacity: 0.85;
     transform: translate(0, 0) scale(1);
@@ -243,6 +286,18 @@ footer {
 .glow-oestrogen.active {
   color: #7c3aed;
   text-shadow: 0 0 18px #a78bfa, 0 0 32px #a78bfa;
+  font-weight: bold;
+}
+
+.glow-progesterone {
+  color: #facc15;
+  text-shadow: 0 0 8px #facc15aa;
+  transition: text-shadow 0.2s, color 0.2s;
+}
+
+.glow-progesterone.active {
+  color: #b45309;
+  text-shadow: 0 0 18px #facc15, 0 0 32px #facc15;
   font-weight: bold;
 }
 
