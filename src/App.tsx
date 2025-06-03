@@ -279,7 +279,7 @@ function HormoneGraph() {
     return d;
   }
   return (
-    <div className="hormone-graph-container">
+    <div className="hormone-graph-container" style={{flexDirection:'column',alignItems:'center'}}>
       <svg
         viewBox={`0 0 ${width} ${height}`}
         width="100%"
@@ -314,6 +314,113 @@ function HormoneGraph() {
           />
         ))}
       </svg>
+      {/* New Matching Activity Below Graph */}
+      <GraphMatchActivity />
+    </div>
+  );
+}
+
+// --- New Component: GraphMatchActivity ---
+const GRAPH_HORMONES = [
+  { name: 'FSH', color: '#38bdf8' },
+  { name: 'LH', color: '#f472b6' },
+  { name: 'Oestrogen', color: '#a78bfa' },
+  { name: 'Progesterone', color: '#facc15' },
+];
+const GRAPH_EXPLANATIONS = [
+  'This hormone has a small rise at the start and a gentle bump at ovulation, then falls.', // FSH
+  'This hormone surges around day 12 as this is when ovulation happens.', // LH
+  'This hormone rises to a peak just before ovulation, dips, then rises again.', // Oestrogen
+  'This hormone stays low until after ovulation, then rises and falls.', // Progesterone
+];
+const GRAPH_CORRECT_MATCHES = [0, 1, 2, 3];
+
+function GraphMatchActivity() {
+  const [selectedHormone, setSelectedHormone] = useState<number|null>(null);
+  const [selectedDef, setSelectedDef] = useState<number|null>(null);
+  const [matches, setMatches] = useState<(number|null)[]>([null, null, null, null]);
+  const [results, setResults] = useState<(boolean|null)[]>([null, null, null, null]);
+
+  function handleHormoneClick(idx: number) {
+    setSelectedHormone(idx);
+  }
+  function handleDefClick(idx: number) {
+    if (selectedHormone !== null && matches[selectedHormone] === null && !matches.includes(idx)) {
+      const newMatches = [...matches];
+      newMatches[selectedHormone] = idx;
+      setMatches(newMatches);
+      const newResults = [...results];
+      newResults[selectedHormone] = GRAPH_CORRECT_MATCHES[selectedHormone] === idx;
+      setResults(newResults);
+      setSelectedHormone(null);
+      setSelectedDef(null);
+    } else {
+      setSelectedDef(idx);
+    }
+  }
+  function getButtonStyle(idx: number, isHormone: boolean) {
+    const matchIdx = isHormone ? matches[idx] : matches.indexOf(idx);
+    const matched = matchIdx !== null && matchIdx !== -1;
+    const correct = isHormone ? results[idx] : results[matches.indexOf(idx)];
+    if (matched) {
+      return {
+        background: correct ? '#bbf7d0' : '#fecaca',
+        borderColor: correct ? '#22c55e' : '#ef4444',
+        color: '#222',
+        fontWeight: 600,
+      };
+    }
+    return {};
+  }
+  return (
+    <div className="knowledge-check-container" style={{marginTop:0, marginBottom:0}}>
+      <div className="kc-col kc-hormones">
+        {GRAPH_HORMONES.map((h, i) => (
+          <button
+            key={h.name}
+            className={`kc-btn${selectedHormone === i ? ' kc-selected' : ''}`}
+            style={{ borderLeft: `6px solid ${h.color}`, ...getButtonStyle(i, true) }}
+            disabled={matches[i] !== null}
+            onClick={() => handleHormoneClick(i)}
+          >
+            {h.name}
+          </button>
+        ))}
+      </div>
+      <svg className="kc-lines" width="60" height="220">
+        {matches.map((defIdx, hIdx) => (
+          defIdx !== null ? (
+            <line
+              key={hIdx}
+              x1={0}
+              y1={30 + hIdx * 50}
+              x2={60}
+              y2={30 + defIdx * 50}
+              stroke={results[hIdx] ? '#22c55e' : '#ef4444'}
+              strokeWidth={3}
+              markerEnd="url(#arrow)"
+            />
+          ) : null
+        ))}
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L8,4 L0,8" fill="#888" />
+          </marker>
+        </defs>
+      </svg>
+      <div className="kc-col kc-defs">
+        {GRAPH_EXPLANATIONS.map((def, i) => (
+          <button
+            key={def}
+            className={`kc-btn${selectedDef === i ? ' kc-selected' : ''}`}
+            style={getButtonStyle(i, false)}
+            disabled={matches.includes(i)}
+            onClick={() => handleDefClick(i)}
+          >
+            {def}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
