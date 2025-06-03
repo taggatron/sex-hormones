@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import './App.css';
 
 type Activity = 'landing' | 'hormones-glands' | 'hormone-match' | 'hormone-levels' | 'fertility-contraception';
